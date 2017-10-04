@@ -6,5 +6,13 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 file = open("spambase.data")
-data = pd.read_table(file, delimiter=",", header=None)
+data = np.loadtxt(file,delimiter=",")
+
+X = data[:, 0:57]
+Y = data[:, 0]
+
+dataframe = pd.DataFrame(data=X)
+
+#apply normalization function to every attribute
+dataframe_norm = dataframe.apply(lambda x: (x - np.mean(x)) / np.std(x))
 
