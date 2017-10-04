@@ -1,0 +1,8 @@
+TO DO:
+
+- PCA (principal component analysis) (because of knn!)
+-- evaluation of PCA
+- knn
+- hypertuning (read up on hyper tuning in general)
+- neural networks
+- bayesian for continuous variables
