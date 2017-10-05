@@ -39,7 +39,7 @@ plt.annotate('n = 48',
              xycoords='data',
              xytext=(+6, -30),
              textcoords='offset points',
-             fontsize=16,)
+             fontsize=16)
 
 plt.plot([t, t], [0, EVC[t]], color='blue', linewidth=2.5, linestyle="--")
 plt.scatter([t, ], [EVC[t], ], 50, color='blue')
