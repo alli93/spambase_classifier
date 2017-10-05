@@ -6,3 +6,8 @@ TO DO:
 - hypertuning (read up on hyper tuning in general)
 - neural networks
 - bayesian for continuous variables
+- FALSE NEGATIVES!!!
+
+
+QUESTIONS:
+- should we do PCA before splitting the data? (We think yes :))
