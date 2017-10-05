@@ -87,4 +87,3 @@ formatter = FuncFormatter(percent)
 plt.gca().yaxis.set_major_formatter(formatter)
 
 plt.show()
-    
