@@ -39,7 +39,6 @@ kNN.fit(X_train, y_train)
 pre_score_train = kNN.score(X_train, y_train)
 pre_score_test = kNN.score(X_test, y_test)
 
-print("Preliminary - train: %f test: %f" %(pre_score_train, pre_score_test))
 # kNN with dimensionality reduction and hypertuning
 X = pca(n_components, dataframe_norm)
 X_train ,  X_test ,  y_train ,  y_test = train_test_split(X,  y,  test_size=0.20 ,  random_state=42)
@@ -50,4 +49,20 @@ kNN.fit(X_train, y_train)
 post_score_train = kNN.score(X_train, y_train)
 post_score_test = kNN.score(X_test, y_test)
 
-print("Post-tuning - train: %f test: %f" %(post_score_train, post_score_test))
+print("pre: %f post %f" % (pre_score_train, post_score_train))
+
+ind = np.arange(2)
+width = 0.2
+
+def percent(y, x):
+   return str(100 * y) + '%'
+
+formatter = FuncFormatter(percent)
+plt.gca().yaxis.set_major_formatter(formatter)
+
+p1 = plt.bar(ind, [pre_score_train, pre_score_test], width)
+p2 = plt.bar(ind+(width*1.1), [post_score_train, post_score_test], width)
+plt. xticks(ind+(width/2), ('Train', 'Test'))
+plt.legend((p1[0], p2[0]), ('Preliminary', 'Post-tuning'))
+plt.ylim(0.85, 1)
+plt.show()
