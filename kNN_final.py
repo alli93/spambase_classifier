@@ -10,6 +10,9 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from matplotlib.ticker import FuncFormatter
 from sklearn.model_selection import KFold
 
+from sklearn.metrics import confusion_matrix
+
+
 def pca(n_components, dataframe):
     pca = PCA(n_components = n_components)
     pca.fit(dataframe)
@@ -30,7 +33,7 @@ dataframe = pd.DataFrame(data=X)
 #apply normalization function to every attribute
 dataframe_norm = dataframe.apply(lambda x: (x - np.mean(x)) / np.std(x))
 
-X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm,  y,  test_size=0.20 ,  random_state=42)
+X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm,  y, test_size=0.20 , random_state=42)
 
 # kNN without any hypertuning or dimensionality reduction
 kNN = KNeighborsClassifier()
@@ -41,7 +44,7 @@ pre_score_test = kNN.score(X_test, y_test)
 
 # kNN with dimensionality reduction and hypertuning
 X = pca(n_components, dataframe_norm)
-X_train ,  X_test ,  y_train ,  y_test = train_test_split(X,  y,  test_size=0.20 ,  random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20 , random_state=42)
 
 kNN = KNeighborsClassifier(n_neighbors = k)
 kNN.fit(X_train, y_train)
@@ -49,6 +52,12 @@ kNN.fit(X_train, y_train)
 post_score_train = kNN.score(X_train, y_train)
 post_score_test = kNN.score(X_test, y_test)
 
+<<<<<<< HEAD
+=======
+print("Train: pre: %f post: %f" % (pre_score_train, post_score_train))
+print("Test : pre: %f post: %f" % (pre_score_test, post_score_test))
+
+>>>>>>> 8414fbb107f8ad506b96c71e05a257605cdbd066
 ind = np.arange(2)
 width = 0.2
 
