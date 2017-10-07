@@ -52,12 +52,10 @@ kNN.fit(X_train, y_train)
 post_score_train = kNN.score(X_train, y_train)
 post_score_test = kNN.score(X_test, y_test)
 
-<<<<<<< HEAD
 =======
 print("Train: pre: %f post: %f" % (pre_score_train, post_score_train))
 print("Test : pre: %f post: %f" % (pre_score_test, post_score_test))
 
->>>>>>> 8414fbb107f8ad506b96c71e05a257605cdbd066
 ind = np.arange(2)
 width = 0.2
 

@@ -58,15 +58,19 @@ splits = 10
 kf = KFold(n_splits = splits)
 kFold_train = np.zeros(n_attributes-1)
 kFold_test = np.zeros(n_attributes-1)
+
+X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm,  y,  test_size=0.20 ,  random_state=42)
+
+#dataframe_cv = np.append(X_train, np.array(y_train)[np.newaxis].T)
 for i in range(1, n_attributes):
-    X = pca(i, dataframe_norm)
+    X = pca(i, X_train)
     # Using the same random_state ensures we do not contaminate our training data with our test data
-    X_train ,  X_test ,  y_train ,  y_test = train_test_split(X,  y,  test_size=0.20 ,  random_state=42)
+    X_train_1,  X_test_1,  y_train_1,  y_test_1 = train_test_split(X,  y_train,  test_size=0.20 ,  random_state=42)
     for cv_train_index, cv_test_index in kf.split(X_train):
-        X_cv_train = [X_train[i] for i in cv_train_index]
-        y_cv_train = [y_train[i] for i in cv_train_index]
-        X_cv_test = [X_train[i] for i in cv_test_index]
-        y_cv_test = [y_train[i] for i in cv_test_index]
+        X_cv_train = [X_train_1[i] for i in cv_train_index]
+        y_cv_train = [y_train_1[i] for i in cv_train_index]
+        X_cv_test = [X_train_1[i] for i in cv_test_index]
+        y_cv_test = [y_train_1[i] for i in cv_test_index]
         kNN = KNeighborsClassifier()
         kNN.fit(X_cv_train, y_cv_train) 
         kFold_train[i-1] += kNN.score(X_cv_train, y_cv_train) / splits
