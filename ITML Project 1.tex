@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[english]{babel}
 \usepackage{amsfonts,amsmath,amssymb}
 \usepackage{graphicx}
@@ -52,7 +52,7 @@
 
 
 \begin{document}
-\title{TITLE}
+\title{Spam e-mail classifiers using spambase dataset}
 
 \author{
 	Alexander Bj\"ornsson\\
@@ -68,14 +68,16 @@
 \maketitle
 
 \begin{abstract}
-We can all agree that the amount of spam we get every day by e-mail is almost limitless. The annoying spam messages are also getting more and more dangerous since they may contain viruses or other threats. Therefore it also \textbf{**(of?)**} no surprise that spam filters have been studied quite intesively with various methods from machine learning.
+We can all agree that the amount of spam we get every day by e-mail is almost limitless. The annoying spam messages are also getting more and more dangerous since they may contain viruses or other threats. Therefore it is of no surprise that spam filters have been studied quite intesively with various methods from machine learning.
 
 We present our models for spam filtering on the dataset spambase. \textbf{**ADD which models and how impressive they are =)**}
 \end{abstract}
 
+\textbf{Keywords:} e-mail, spam, $k$ nearest-neighbors ($k$NN), Na\"ive Bayes (NB), artificial neural networks (ANN)
+
 \section{Introduction}
 
-Following the definition in~\cite[p.2]{Cormack-2006}, \textit{\textbf{spam}: unwanted communication intended to be deliv- ered to an indiscriminate target, directly or indirectly, notwithstanding measures to prevent its delivery; \textbf{spam filter}: an automated technique to identify spam for the purpose of preventing its delivery.}.
+Following the definition in~\cite[p.2]{Cormack-2006}, \textit{{\em spam}: unwanted communication intended to be deliv- ered to an indiscriminate target, directly or indirectly, notwithstanding measures to prevent its delivery; {\em spam filter}: an automated technique to identify spam for the purpose of preventing its delivery.}.
 
 -- explain ham
 
@@ -104,7 +106,7 @@ There are 4601 instances out of which 1813 (about 39.4$\%$) are spam. Each insta
 \begin{itemize}
   \item[--] the last one gives us the class information, it is either 1 (= spam) or 0 (= ham);
   \item[--] first 48 columns are continuous real attributes in the range $[0,100]$ of type {\tt word\_freq\_WORD} (e.g.\ {\tt word\_freq\_make}, {\tt word\_freq\_address}, {\tt word\_freq\_all}, etc.). 
-  These attributes present the ration of the number of times the {\tt WORD} appears in the e-mail) over the total number of words in e-mail.  A \''word\'' in this case is any 
+  These attributes present the ration of the number of times the {\tt WORD} appears in the e-mail) over the total number of words in e-mail.  A "word" in this case is any 
 string of alphanumeric characters bounded by non-alphanumeric characters or end-of-string.
   \item[--] next 6 columns are continuous real attributes in the range $[0,100]$ of type {\tt char\_freq\_CHAR} (e.g.\ {\tt char\_freq\_;}, {\tt char\_freq\_!}, {\tt char\_freq\_\$}), 
   which present the percentage of characters in the e-mail that match {\tt CHAR}.
@@ -136,20 +138,22 @@ We have decided to find a spam filter with our dataset with \textbf{** three **}
 
 \subsection{$k$ nearest-neighbour classifier}
 
--- PCA cross validation (on standard $k$, which is 10??)
+-- PCA cross validation (for default $k$, which is 5??)
 
--- -- data is first split into train and test set, train set is then used for cross validation to determine which number of components would be the best to use; this is then used for (proper) PCA on the whole data set
+-- -- data is first split into train and test set, train set is then used for cross validation to determine which number of components would be the best to use; this is then used for (proper) PCA on the whole data set 
 
 -- 
 
 -- kNN is first trained on all 57 attributes and then compared with model obtained with "PCAed" data for the number of components that proved to be the best with cross-validation
 
--- then kNN is hypertuned for which $k$ would be the best
+-- then kNN is hypertuned for which $k$ would be the best: $k=13$
 
 -- 
 
 
 \subsection{Bayesian ...}
+
+-- explain why multinomial (coz the distribution of attibutes is the closest to multinomial) 
 
 \subsection{Neural networks}
 
@@ -261,7 +265,7 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
 
 """
-loading and adjusting data
+loading and preprocesing the data
 """
 
 file = open("spambase.data")
@@ -275,15 +279,11 @@ dataframe = pd.DataFrame(data=X)
 #apply normalization function to every attribute
 dataframe_norm = dataframe.apply(lambda x: (x - np.mean(x)) / np.std(x))
 
-X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm,  y, test_size=0.20 , random_state=42)
+X_train,  X_test,  y_train,  y_test = train_test_split(dataframe_norm,  y, test_size=0.20, random_state=42)
 
 """
 PCA
 """
-def pca(n_components, dataframe):
-    pca = PCA(n_components = n_components)
-    pca.fit(dataframe)
-    return pca.transform(dataframe)
 
 """
 kNN model
