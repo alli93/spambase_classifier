@@ -34,6 +34,6 @@ Hypertuning for alpha. We find lidstone smoothing with a small
 alpha value to give best results
 
 'multinomialBayes_final'
-Comparison of our model with a non-preprocessed, non-hypertuned model. alpha value is 0.01.
+Comparison of our model with a non-preprocessed, non-hypertuned model. alpha value is 0.01. Or any small value < 1.
 
 
