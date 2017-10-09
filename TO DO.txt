@@ -1,3 +1,12 @@
+FINAL Comments:
+- n-components.png, mNB_model_comparison_precision.png, kNN_model_comparison_precision.png figures are cut off a bit (left label is not properly visible)
+
+- CHANGE label on Hypertune_kNearest_recall.png (x-axis should just be k not KNearest)
+
+- code in latex
+
+
+
 TO DO:
 
 - PCA (principal component analysis) (because of knn!)
