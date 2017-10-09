@@ -279,20 +279,116 @@ dataframe = pd.DataFrame(data=X)
 #apply normalization function to every attribute
 dataframe_norm = dataframe.apply(lambda x: (x - np.mean(x)) / np.std(x))
 
-X_train,  X_test,  y_train,  y_test = train_test_split(dataframe_norm,  y, test_size=0.20, random_state=42)
-
-"""
-PCA
-"""
-
 """
 kNN model
 """
+# explained_variance_ratio_ for n_components
+EVC = []
+for attribute in dataframe_norm:
+    pca = PCA(n_components=attribute)
+    pca.fit(dataframe_norm)
+    EVC.append(pca.explained_variance_ratio_.sum())
+
+# n_components hyperparameter tuning using KFold cross-validation
+splits = 10
+kf = KFold(n_splits = splits)
+n_components_kFold_train = np.zeros(n_attributes-1)
+n_components_kFold_test = np.zeros(n_attributes-1)
+for i in range(1, n_attributes):
+    X = pca(i, dataframe)
+    # Using the same random_state ensures we do not contaminate our training data with our test data
+    X_train ,  X_test ,  y_train ,  y_test = train_test_split(X,  y,  test_size=0.20 ,  random_state=42)
+    for cv_train_index, cv_test_index in kf.split(X_train):
+        X_cv_train = [X_train_1[i] for i in cv_train_index]
+        y_cv_train = [y_train_1[i] for i in cv_train_index]
+        X_cv_test = [X_train_1[i] for i in cv_test_index]
+        y_cv_test = [y_train_1[i] for i in cv_test_index]
+        # k = 5 by defult
+        kNN = KNeighborsClassifier()
+        kNN.fit(X_cv_train, y_cv_train) 
+        n_components_kFold_train[i-1] += kNN.score(X_cv_train, y_cv_train) / splits
+        n_components_kFold_test[i-1]  += kNN.score(X_cv_test, y_cv_test) / splits
+
+# n_neighbors cross-validation
+n_components = 20 # hypertuned for maximal accuracy
+X = pca(n_components, dataframe_norm)
+X_train ,  X_test ,  y_train ,  y_test = train_test_split(X,  y,  test_size=0.20 ,  random_state=42)
+
+k_tests = list(range(10, 25))
+k_results_train = np.zeros(len(k_tests))
+k_results_test = np.zeros(len(k_tests))
+
+kf = KFold(n_splits = splits)
+for cv_train_index, cv_test_index in kf.split(X_train):
+        X_cv_train = [X_train[i] for i in cv_train_index]
+        y_cv_train = [y_train[i] for i in cv_train_index]
+        X_cv_test = [X_train[i] for i in cv_test_index]
+        y_cv_test = [y_train[i] for i in cv_test_index]
+        i=0
+        for test in k_tests:
+            kNN = KNeighborsClassifier(n_neighbors = test)
+            kNN.fit(X_cv_train, y_cv_train) 
+            k_results_train[i] += kNN.score(X_cv_train, y_cv_train) / splits
+            k_results_test[i] += kNN.score(X_cv_test, y_cv_test) / splits
+            i += 1
+
 
 
 """
 NB model
 """
+
+# Different preprocessings
+dataframe = pd.DataFrame(data=X)
+dataframe_norm = dataframe.apply(lambda x: (x - np.mean(x)) / np.std(x))
+min_max_scaler = preprocessing.MinMaxScaler()
+dataframe_norm_scaled = min_max_scaler.fit_transform(dataframe_norm)
+dataframe_norm_upscaled = dataframe_norm.apply(lambda x: (x + abs(min(x))))
+
+# No preprocessing of the data
+X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe,  y,  test_size=0.20 ,  random_state=42)
+mNB = GaussianNB()
+mNB.fit(X_train, y_train)
+score_train = mNB.score(X_train, y_train)
+score_test = mNB.score(X_test, y_test)
+
+# Upscaled normalized data with no negative attributes
+X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm_upscaled,  y,  test_size=0.20 ,  random_state=42)
+mNB_upscaled = GaussianNB()
+mNB_upscaled.fit(X_train, y_train)
+norm_upscaled_score_train = mNB_upscaled.score(X_train, y_train)
+norm_upscaled_score_test = mNB_upscaled.score(X_test, y_test)
+
+# Scaled normalized data 
+X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm_scaled,  y,  test_size=0.20 ,  random_state=42)
+mNB_scaled = GaussianNB()
+mNB_scaled.fit(X_train, y_train)
+norm_scaled_score_train = mNB_scaled.score(X_train, y_train)
+norm_scaled_score_test = mNB_scaled.score(X_test, y_test)
+
+
+# kFold cross-validation for alpha
+splits = 10
+kf = KFold(n_splits = splits)
+
+X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm_scaled,  y,  test_size=0.20 ,  random_state=42)
+
+alpha_tests = np.arange(0, 10.0, 0.01)
+alpha_kFold_train = np.zeros(len(alpha_tests))
+alpha_kFold_test = np.zeros(len(alpha_tests))
+for cv_train_index, cv_test_index in kf.split(X_train):
+    X_cv_train = [X_train[i] for i in cv_train_index]
+    y_cv_train = [y_train[i] for i in cv_train_index]
+    X_cv_test = [X_train[i] for i in cv_test_index]
+    y_cv_test = [y_train[i] for i in cv_test_index]
+    i = 0
+    for test in alpha_tests:
+        mNB_cv = MultinomialNB(alpha=test)
+        mNB_cv.fit(X_cv_train, y_cv_train)
+        alpha_kFold_train[i] += mNB_cv.score(X_cv_train, y_cv_train) / splits
+        alpha_kFold_test[i]  += mNB_cv.score(X_cv_test, y_cv_test) / splits
+        i += 1
+
 
 
 """

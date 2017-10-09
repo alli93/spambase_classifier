@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import precision_score
 from  sklearn.model_selection  import  train_test_split
 from sklearn.preprocessing import Normalizer
 from sklearn.decomposition import PCA
@@ -30,8 +31,8 @@ splits = 10
 kf = KFold(n_splits = splits)
 
 alpha_tests = np.arange(0, 10.0, 0.01)
-kFold_train = np.zeros(len(alpha_tests))
-kFold_test = np.zeros(len(alpha_tests))
+alpha_cv_train = np.zeros(len(alpha_tests))
+alpha_cv_test = np.zeros(len(alpha_tests))
 for cv_train_index, cv_test_index in kf.split(X_train):
     X_cv_train = [X_train[i] for i in cv_train_index]
     y_cv_train = [y_train[i] for i in cv_train_index]
@@ -41,15 +42,15 @@ for cv_train_index, cv_test_index in kf.split(X_train):
     for test in alpha_tests:
         mNB_cv = MultinomialNB(alpha=test)
         mNB_cv.fit(X_cv_train, y_cv_train)
-        kFold_train[i] += mNB_cv.score(X_cv_train, y_cv_train) / splits
-        kFold_test[i]  += mNB_cv.score(X_cv_test, y_cv_test) / splits
+        alpha_cv_train[i] += precision_score(y_cv_train, mNB_cv.predict(X_cv_train), average = 'micro') / splits
+        alpha_cv_test[i]  += precision_score(y_cv_test, mNB_cv.predict(X_cv_test), average = 'micro') / splits
         i += 1
     
-plt.ylabel("Accuracy", fontsize=16)
-plt.xlabel("Number of components", fontsize=16)
+plt.ylabel("Precision", fontsize=16)
+plt.xlabel("alpha", fontsize=16)
 
-plt.plot(alpha_tests, kFold_train,  label='Train', color = 'blue')
-plt.plot(alpha_tests, kFold_test, label='Test', color = 'red')
+plt.plot(alpha_tests, alpha_cv_train,  label='Train', color = 'blue')
+plt.plot(alpha_tests, alpha_cv_test, label='Test', color = 'red')
 
 plt.legend(bbox_to_anchor=(0.8, 0.3), loc=2, borderaxespad=0.)
 

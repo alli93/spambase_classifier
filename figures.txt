@@ -6,7 +6,7 @@ with 48 components.
 
 'hypertune_n_components'
 Cross-validation to find out the optimal number of components. Testing shows
-it's 20.
+it's 20. Or 14 using precision.
 
 'Hypertune_kNearest_1'
 Cross-validation on n_neighbors parameter for kNN. We test values
@@ -15,11 +15,12 @@ value of n_neighbors is somewhere between 10 and 25
 
 'Hypertune_kNearest_2'
 Testing values between 10 and 25. 13 is the optimal value for n_neighbors.
+Using precision, 4 is the optimal number.
 
 'kNN_model_comparison'
 Comparison of our reduced and hypertuned model with a non-reduced, non-hypertuned one.
-n_components = 20
-n_neighbors = 13
+n_components = 14
+n_neighbors = 4
 
 ### mNB #######
 

@@ -9,13 +9,14 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from matplotlib.ticker import FuncFormatter
 from sklearn.model_selection import KFold
+from sklearn.metrics import precision_score
 
 def pca(n_components, dataframe):
     pca = PCA(n_components = n_components)
     pca.fit(dataframe)
     return pca.transform(dataframe)
 
-n_components = 20 # hypertuned for maximal accuracy
+n_components = 14 
 
 file = open("spambase.data")
 data = np.loadtxt(file,delimiter=",")
@@ -33,9 +34,9 @@ X = pca(n_components, dataframe_norm)
 X_train ,  X_test ,  y_train ,  y_test = train_test_split(X,  y,  test_size=0.20 ,  random_state=42)
 
 # First guess. Lross-validate on these values and plot out a curve
-k_tests = list(range(10, 25))
-k_results_train = np.zeros(len(k_tests))
-k_results_test = np.zeros(len(k_tests))
+k_tests = list(range(1, 100))
+k_precision_train = np.zeros(len(k_tests))
+k_precision_test = np.zeros(len(k_tests))
 
 splits = 10
 kf = KFold(n_splits = splits)
@@ -48,15 +49,15 @@ for cv_train_index, cv_test_index in kf.split(X_train):
         for test in k_tests:
             kNN = KNeighborsClassifier(n_neighbors = test)
             kNN.fit(X_cv_train, y_cv_train) 
-            k_results_train[i] += kNN.score(X_cv_train, y_cv_train) / splits
-            k_results_test[i] += kNN.score(X_cv_test, y_cv_test) / splits
+            k_precision_train [i-1] += precision_score(y_cv_train, kNN.predict(X_cv_train), average = 'micro') / splits
+            k_precision_test [i-1]  += precision_score(y_cv_test, kNN.predict(X_cv_test), average = 'micro') / splits
             i += 1
 
-plt.ylabel("Accuracy", fontsize=16)
+plt.ylabel("Precision", fontsize=16)
 plt.xlabel("K-Nearest", fontsize=16)
 
-plt.plot(k_tests, k_results_train, label='Train', color = 'blue')
-plt.plot(k_tests, k_results_test, label='Test', color = 'red')
+plt.plot(k_tests[0:95], k_precision_train[0:95] , label='Train', color = 'blue')
+plt.plot(k_tests[0:95], k_precision_test[0:95] , label='Test', color = 'red')
 
 plt.legend(bbox_to_anchor=(0.8, 0.5), loc=2, borderaxespad=0.)
 

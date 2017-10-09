@@ -9,6 +9,7 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from matplotlib.ticker import FuncFormatter
 from sklearn.model_selection import KFold
+from sklearn.metrics import precision_score
 
 from sklearn.metrics import confusion_matrix
 
@@ -19,8 +20,8 @@ def pca(n_components, dataframe):
     return pca.transform(dataframe)
 
 # Hypertune parameters
-n_components = 20 
-k = 13
+n_components = 14
+k = 4
 
 file = open("spambase.data")
 data = np.loadtxt(file,delimiter=",")
@@ -39,8 +40,8 @@ X_train ,  X_test ,  y_train ,  y_test = train_test_split(dataframe_norm,  y, te
 kNN = KNeighborsClassifier()
 kNN.fit(X_train, y_train)
 
-pre_score_train = kNN.score(X_train, y_train)
-pre_score_test = kNN.score(X_test, y_test)
+precision_train_pre = precision_score(y_train, kNN.predict(X_train), average = 'micro')
+precision_test_pre = precision_score(y_test, kNN.predict(X_test), average = 'micro')
 
 # kNN with dimensionality reduction and hypertuning
 X = pca(n_components, dataframe_norm)
@@ -49,12 +50,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20 , rando
 kNN = KNeighborsClassifier(n_neighbors = k)
 kNN.fit(X_train, y_train)
 
-post_score_train = kNN.score(X_train, y_train)
-post_score_test = kNN.score(X_test, y_test)
-
-=======
-print("Train: pre: %f post: %f" % (pre_score_train, post_score_train))
-print("Test : pre: %f post: %f" % (pre_score_test, post_score_test))
+precision_train_post = precision_score(y_train, kNN.predict(X_train), average = 'micro')
+precision_test_post = precision_score(y_test, kNN.predict(X_test), average = 'micro')
 
 ind = np.arange(2)
 width = 0.2
@@ -65,8 +62,9 @@ def percent(y, x):
 formatter = FuncFormatter(percent)
 plt.gca().yaxis.set_major_formatter(formatter)
 
-p1 = plt.bar(ind, [pre_score_train, pre_score_test], width)
-p2 = plt.bar(ind+(width*1.1), [post_score_train, post_score_test], width)
+p1 = plt.bar(ind, [precision_train_pre, precision_test_pre], width)
+p2 = plt.bar(ind+(width*1.1), [precision_train_post, precision_test_post], width)
+plt.ylabel("Precision", fontsize=16)
 plt. xticks(ind+(width/2), ('Train', 'Test'))
 plt.legend((p1[0], p2[0]), ('Preliminary', 'Post-tuning'))
 plt.ylim(0.85, 1)
