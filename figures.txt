@@ -1,0 +1,38 @@
+###### kNN ########
+
+'n_components'
+(pca) Explained variance ratio plot. We reach 95% explained variance
+with 48 components.
+
+'hypertune_n_components'
+Cross-validation to find out the optimal number of components. Testing shows
+it's 20.
+
+'Hypertune_kNearest_1'
+Cross-validation on n_neighbors parameter for kNN. We test values
+between 1 and 30. Looking at the plot we surmize that the optimal
+value of n_neighbors is somewhere between 10 and 25
+
+'Hypertune_kNearest_2'
+Testing values between 10 and 25. 13 is the optimal value for n_neighbors.
+
+'kNN_model_comparison'
+Comparison of our reduced and hypertuned model with a non-reduced, non-hypertuned one.
+n_components = 20
+n_neighbors = 13
+
+### mNB #######
+
+'multinomialBayes_preprocessing'
+Comparison of accuracy from different preprocessings. The preprocessings
+we test are no-preprocessing, normalized and upscaled, and finally normalized
+and then scaled between [0, 1]
+
+'multinomialBayes_hypertune'
+Hypertuning for alpha. We find lidstone smoothing with a small
+alpha value to give best results
+
+'multinomialBayes_final'
+Comparison of our model with a non-preprocessed, non-hypertuned model. alpha value is 0.01.
+
+
