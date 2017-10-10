@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.6.8)  10 OCT 2017 12:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.6.8)  10 OCT 2017 12:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -322,7 +322,7 @@ Package color Info: Driver file: pdftex.def on input line 147.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2015/06/04 1.6 listings language file
 )
-(./ITML Project 1.aux (./ann.aux) (./evaluation.aux) (./conclusions.aux))
+(./ITML Project 1.aux (./ann.aux) (./evaluation.aux))
 \openout1 = `"ITML Project 1.aux"'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
@@ -480,49 +480,32 @@ File: mNB_model_comparison_precision.png Graphic file (type png)
 Package pdftex.def Info: mNB_model_comparison_precision.png used on input line 
 210.
 (pdftex.def)             Requested size: 277.51894pt x 202.93573pt.
- [6 <./hypertune_mNB_precision.png> <./mNB_model_comparison_precision.png>]
-\openout2 = `ann.aux'.
-
- (./ann.tex) [7
-
-] [8
-
-]
-\openout2 = `evaluation.aux'.
-
- (./evaluation.tex)
-[9
-
-] [10
-
-]
-\openout2 = `conclusions.aux'.
-
- (./conclusions.tex) [11
-
-]
+ [6 <./hypertune_mNB_precision.png> <./mNB_model_comparison_precision.png>] (./
+ann.tex) (./evaluation.tex)
+(./conclusions.tex)
 Missing character: There is no â in font cmss10!
 Missing character: There is no € in font cmss10!
 Missing character: There is no “ in font cmss10!
- [12
-
-] [13] [14] [15]
+ [7] [8] [9] [10]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 465.
- [16]
+ [11]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 465.
-
-(./ITML Project 1.aux (./ann.aux) (./evaluation.aux) (./conclusions.aux))
+ (./ITML Project 1.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 465.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 465.
 Package rerunfilecheck Info: File `"ITML Project 1".out' has not changed.
 (rerunfilecheck)             Checksum: 4705D69E3BCDD78324FDA274DC27A888;231.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 465.
  ) 
 Here is how much of TeX's memory you used:
- 9411 strings out of 492995
- 140248 string characters out of 6132705
+ 9397 strings out of 492995
+ 140089 string characters out of 6132705
  319923 words of memory out of 5000000
- 12617 multiletter control sequences out of 15000+600000
+ 12616 multiletter control sequences out of 15000+600000
  17550 words of font info for 68 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  44i,9n,42p,894b,1870s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -539,10 +522,10 @@ texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/local
 /texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/
 texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/t
 exlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on "ITML Project 1.pdf" (16 pages, 344049 bytes).
+Output written on "ITML Project 1.pdf" (11 pages, 342825 bytes).
 PDF statistics:
- 431 PDF objects out of 1000 (max. 8388607)
- 378 compressed objects within 4 object streams
- 212 named destinations out of 1000 (max. 500000)
+ 409 PDF objects out of 1000 (max. 8388607)
+ 361 compressed objects within 4 object streams
+ 207 named destinations out of 1000 (max. 500000)
  86 words of extra memory for PDF output out of 10000 (max. 10000000)
 
