@@ -2,6 +2,7 @@
 \usepackage[english]{babel}
 \usepackage{amsfonts,amsmath,amssymb}
 \usepackage{graphicx}
+\usepackage{subfig} %for figures next to each other
 
 \usepackage{hyperref} % for hyperlinks
 
@@ -52,17 +53,17 @@
 
 
 \begin{document}
-\title{Spam e-mail classifiers using spambase dataset}
+\title{\textbf{Spam e-mail classifiers using spambase dataset}}
 
 \author{
 	Alexander Bj\"ornsson\\
-	{\tt email1}
+	{\tt alexanderb13@ru.is}
 \and
 	Sara Sabrina Zemlji\v c \\
 	{\tt sara.zemljic@gmail.com}
 }
 
-\date{{\small School of Computer Science, Reykjavik University, Iceland}\\
+\date{{\small School of Computer Science\\ Reykjavik University, Iceland}\\
 \medskip
 {\small \today}}
 \maketitle
@@ -70,10 +71,12 @@
 \begin{abstract}
 We can all agree that the amount of spam we get every day by e-mail is almost limitless. The annoying spam messages are also getting more and more dangerous since they may contain viruses or other threats. Therefore it is of no surprise that spam filters have been studied quite intesively with various methods from machine learning.
 
-We present our models for spam filtering on the dataset spambase. \textbf{**ADD which models and how impressive they are =)**}
+We present our models for spam filtering on the dataset spambase using methods like $k$ nearest-neighbors, Na\"ive Bayes and neural networks.
 \end{abstract}
 
-\textbf{Keywords:} e-mail, spam, false positives, $k$ nearest-neighbors ($k$NN), Na\"ive Bayes (NB).
+\medskip
+\textbf{Keywords:} e-mail, spam, false positives, $k$ nearest-neighbors ($k$NN), Na\"ive Bayes (NB), artificial neural network (ANN).
+\medskip
 
 \section{Introduction}
 
@@ -82,14 +85,12 @@ Spam nowadays can have different purposes but it generally presents a threat for
 % false positives
 Here it is very important to note that classifying a spam message wrongly as a ham is not as bad as classifying a ham message as a spam. So when comparing models we are mainly just interested in whether a model gives us lower values for false positives.
 
-
-Let us just list a few models that have been trained for e-mail spam detection. Even though it is not up-to-date anymore, Cormack~\cite{Cormack-2006} gives a very extensive overview of most important spam filter techniques both, hand-crafted and machine-learning ones. Among most popular are $k$NN, ANN, support vector machines (SVM), and also Bayesian methods. The latter ones have a lot of possibilities and they often depend on distribution of particular attributes in datasets. Most of the options on Na\"ive Bayesian classifiers were compared and studied in~\cite{Metsis-2006}, as well as recently in~\cite{Eberhardt-2015} and~\cite{sah-2017}, where NB was compared to SVM. ANN for spam e-mail filtering has been studied in~\cite{puniskis-2006}, ~\cite{Idris-2011} and has been compared to different other classifiers in~\cite{deepa-2010}.
+Let us first list a few models that have been trained for e-mail spam detection. Even though it is not really up-to-date anymore, Cormack~\cite{Cormack-2006} gives a very extensive overview of most important spam filter techniques both, hand-crafted and machine-learning ones. Among most popular are $k$NN, ANN, support vector machines (SVM), and also Bayesian methods. The latter ones have a lot of possibilities and they often depend on distribution of particular attributes in datasets. Most of the options on Na\"ive Bayesian classifiers were compared and studied in~\cite{Metsis-2006}, as well as recently in~\cite{Eberhardt-2015} and~\cite{sah-2017}, where NB was compared to SVM. ANN for spam e-mail filtering has been studied in~\cite{puniskis-2006}, ~\cite{Idris-2011} and has been compared to different other classifiers in~\cite{deepa-2010}.
 %
 There were also several papers focusing on feature selection and parameters optimization~\cite{lee-2010} or on content-based classification~\cite{saab-2014}. An intriguing add-on to the very extensive research on spam filters is another recent paper~\cite{asadi-2017} studying unsupervised neural network methods which were then applied on several datasets including our spambase.
 
 
-\bigskip
-\textbf{maybe also why we decided for this dataset out of all others: the others would require way too much preprocesing with HTML and stuff like that which is not soooo relevant to this project}\\
+%\textbf{maybe also why we decided for this dataset out of all others: the others would require way too much preprocesing with HTML and stuff like that which is not soooo relevant to this project}\\
 
 
 The rest of our paper is organized as follows. In the next section we introduce our dataset and what preprocesing we performed on it. In Section~\ref{sec-models} we discuss the classifiers we trained and their performance is presented in Section~\ref{sec-evaluation}. We conclude the paper with final thoughts about the filters and present our code in the appendix.
@@ -111,12 +112,12 @@ string of alphanumeric characters bounded by non-alphanumeric characters or end-
   \item[--] last 3 attributes are continuous real in the range $[1,\ldots ]$ and are a bit special. They count occurences with capital letters. For example, {\tt capital\_run\_length\_average} counts average length of {\em uninterrupted sequences of capital letters}.
 \end{itemize}
 
-This dataset is preprocesed, which means the attributes were chosen this way to classify spam the best. It also has no missing values. The data is not available in the raw format, so it is imposible to experiment with other attributes that could be extracted from their e-mails. Despite that this dataset was used in various studies for testing different classifiers for recognizing spam e-mails.
+This dataset is preprocesed, which means the attributes were chosen this way to classify spam the best when they introduced the dataset in 1999. It also has no missing values. The data is not available in the raw format, so it is imposible to experiment with other attributes that could be extracted from their e-mails. Despite that this dataset was used in various studies for testing different classifiers for recognizing spam e-mails.
 
 First we split our data into train and test sets, using $20\%$ of the data for testing our models at the end. For all calculations presented in Section~\ref{sec-models} we thus only use train part of the data. Furthermore, to ensure that we are always using the same train set we included the same {\tt random\_state} in all calculations. Our classes (spam-ham) are in about $2:3$ ratio, so we checked that the train-test split has a similar ratio of spam and ham e-mails as well. 
 
 For some of our models we required normalized data. We assume some outliers in our data therefore we use standard score normalization (in scikit-learn this corresponds to {\tt norm='l2'} when using normalize {\tt function}). 
-
+\bigskip
 
 \section{Models}
 \label{sec-models}
@@ -125,69 +126,101 @@ After studying the literature of spam e-mail filters, in particular what has bee
 
 Let us once again mention that we are mainly interested in minimizing the false positives because we thing classifying a regular e-mail as spam is much larger sin than having one or two spam e-mails in our mailbox. Therefore we merely focus on precision rather than accuracy of our models.
 
-\bigskip
-
+\newpage
 \noindent
 \framebox[1.1\width]{\textbf{$k$ nearest-neighbour classifier}}
 
 \smallskip
 
 Our data has 57 attributes, that means we are dealing with 57-dimensional space and with "only" 4601 instances, which makes them very sparse in the space. Therefore we have decided to first reduce dimensionality of the dataset using Principle Component Analysis (PCA). In general, the more we reduce the dimensionality the better, but on the other hand using just a single component of the dataset might hide some important characteristics of data. 
-
 \begin{figure}[ht!]
-\begin{center}
+\centering
 \includegraphics[scale=0.60]{n_components.png}
-\caption{Variance of data represented by components in PCA (in relation to the number of components)}
+\caption{Variance of data represented by components in PCA}
 \label{fig:n-components}
-\end{center}
 \end{figure}
-First we looked at what number of components we would still have 95$\%$ of variance of our data. This gave us 48 components (see Figure~\ref{fig:n-components}), but since this is still quite high number for dimensionality for $k$NN model we decided to research which number of components would give us best results for a simple (standard\footnote{Standard is refering to default value suggested by scikit learn, which is $k=5$.}) $k$NN model. Using 10-fold cross-validation and precision we deducted that {\tt n\_components} should be 14. These results are presented on Figure~\ref{fig:hypertune_n_components} (For more details see the code in the Appendix.)
+First we looked at what number of components we would still have 95$\%$ of variance of our data. This gave us 48 components (see Figure~\ref{fig:n-components}), but since this is still quite high number for dimensionality for $k$NN model we decided to research which number of components would give us best results for a simple (standard\footnote{Standard is refering to default value suggested by scikit learn, which is $k=5$.}) $k$NN model. Using 10-fold cross-validation and precision we deducted that {\tt n\_components} should be 14. These results are presented in Figure~\ref{fig:hypertune_n_components} (For more details see the code in the Appendix.)
 \begin{figure}[ht!]
-\begin{center}
+\centering
 \hspace*{-17mm}
 \includegraphics[scale=0.40]{hypertune_n_components_recall.png}
 \caption{Precision in relation to number of components in PCA}
 \label{fig:hypertune_n_components}
-\end{center}
 \end{figure}
 
 Now that we set the number of components in PCA to 14 we can focus on $k$NN and try to find the best parameters for $k$NN for our data. To determine what number of neighbors to look at we applied yet another cross-validation: we look at precision for $k\in [1,100]$, see Figure~\ref{fig:Hypertune_kNearest}. The best precision on test data we get with $k=4$.
 \begin{figure}[ht!]
-\begin{center}
+\centering
 \includegraphics[scale=0.60]{Hypertune_kNearest_recall.png}
 \caption{Precision in relation to number of components in PCA}
 \label{fig:Hypertune_kNearest}
-\end{center}
 \end{figure}
 
 Finally, let us check that all the preprocesing and hypertuning really gave us a better model by comparing our latest $k$NN classifier trained on 14 principal components with $k=4$ to the standard $k$NN model (that is with all of 57 attributes and $k=5$. The comparison can be found in Figure~\ref{fig:kNN_model_comparison} and we can deduct that hypertuned model clearly gives us better precision.
 \begin{figure}[ht!]
-\begin{center}
+\centering
 \includegraphics[scale=0.60]{kNN_model_comparison_precision.png}
 \caption{Comparisson of $k$NN models}
 \label{fig:kNN_model_comparison}
-\end{center}
 \end{figure}
 
 
 
-\bigskip
-
+\newpage
 \noindent
 \framebox[1.1\width]{\textbf{NB classifier}}
 
 \smallskip
 
--- explain why multinomial (coz the distribution of attibutes is the closest to multinomial) 
+Using a Na\"ive Bayes method we would in general need discrete probabilities, but since we have continuous attributes in our dataset we will instead use distributions of these. There are several options for this, one of the most common ones is Gaussian Na\"ive Bayes, which assumes Gaussian (so normal) distribution of each attribute. Looking at distributions of a few attributes they all looked very similar (see Figure~\ref{fig:violinplots}) and close to multinomial distribution so we decided to use Multinomial Na\"ive Bayes instead.
+\begin{figure}[ht!]
+\centering
+  \subfloat{\includegraphics[scale=0.48]{violinplot0.png}}
+  \hfill
+  \subfloat{\includegraphics[scale=0.48]{violinplot56.png}}
+  \caption{Distributions of attributes {\tt word\_freq\_make} and {\tt capital\_run\_length\_total}.}
+\label{fig:violinplots}
+\end{figure}
+
+There are a few restrictions to multinomial distributions though. For example, our values have to be non-negative so using normalized data from the previous model does not work, but it may work if we scale those values to a non-negative range then. We have therefore tried out a few preprocesing options to see which ones would give us best results. In Figure~\ref{fig:multinomialBayes_preprocessing} for comparison of NB models built after different preprocessings. The preprocessings we test are no preprocessing, normalized data that is shifted to non-negative range, and finally normalized data that is then scaled on the interval between $[0, 1]$. 
+%
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.60]{mNB_preprocessing_precision.png}
+\caption{Comparison of precision from different preprocessings in MultinomialNB.}
+\label{fig:multinomialBayes_preprocessing}
+\end{figure}
+%
+The best results we achieve with \textbf{** normalized dataset which is then shifted to non-negative range **}, so we use this dataset for hypertuning our model. 
+\ref{fig:multinomialBayes_hypertune}.
+%
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.60]{hypertune_mNB_precision.png}
+\caption{Hypertuning of $\alpha$ in MultinomialNB.}
+\label{fig:multinomialBayes_hypertune}
+\end{figure}
+%
+The only hypertuning we can do with MultinomialNB classifier is adjusting $\alpha$ value, which is introduced, similarly as $m$-estimate for regular NB, for handling $0$s in probabilities that we get. If any of the probabilities is $0$ we would get the whole product $=0$ and this would hide all the information of the other probabilities. 
+Hypertuning using 10-fold cross-validation gives us the results presented on Figure~We figured {\em lidstone smoothing}\footnote{Lidstone smoothing means $\alpha <1$, see \cite[1.9.]{scikit} for more information.} with $\alpha$ as small as possible gives best results, so we decided to make a final NB model with $\alpha = 0.01$. 
+
+Finally we compare the hypertuned NB model with a NB model that we would have gotten on no-preproced data with no hypertuning. We significantly increased precision both on train and test data.
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.60]{mNB_model_comparison_precision.png}
+\caption{Comparisson of MultinomialNB models.}
+\label{fig:mNB_model_comparison_precision}
+\end{figure}
 
 
-\bigskip
 
+\newpage
 \noindent
 \framebox[1.1\width]{\textbf{ANN classifier}}
 
 \smallskip
 
+-- what is with ANN?
 
 \section{Evaluation of models}
 \label{sec-evaluation}
@@ -263,6 +296,8 @@ bla bla introduction text :D
   An approach for malicious spam detection in email with comparison of different classifiers,
   International Research Journal of Engineering and Technology 4(8) (2017) 2238--2242.        
 
+\bibitem{scikit}
+  {\url http://scikit-learn.org/stable/index.html}
 \end{small}
 \end{thebibliography}
 
